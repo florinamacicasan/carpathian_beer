@@ -10,15 +10,25 @@ repos:
     -   id: black
         name: black
         language: system
-        entry: python -m black
+        entry: poetry run black
         types: [python]
     -   id: flake8
         name: flake8
         language: system
-        entry: python -m flake8
+        entry: poetry run flake8
         types: [python]
     -   id: isort
         name: isort
         language: system
-        entry: python -m isort
+        entry: poetry run isort
+        types: [python]
+    -   id: reorder-python-imports
+        name: reorder-python-imports
+        language: system
+        entry: poetry run reorder-python-imports
+        types: [python]
+    -   id: pytest
+        name: pytest
+        language: system
+        entry: poetry run pytest
         types: [python]
