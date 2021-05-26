@@ -1,2 +1,4 @@
 def test_initial():
-    assert 5 == 5
+    assert (
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" == "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    )
