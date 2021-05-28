@@ -22,11 +22,6 @@ repos:
         language: system
         entry: poetry run isort
         types: [python]
-    -   id: reorder-python-imports
-        name: reorder-python-imports
-        language: system
-        entry: poetry run reorder-python-imports
-        types: [python]
     -   id: pytest
         name: pytest
         language: system
