@@ -33,4 +33,4 @@ class Beer:
         return self.__beer_details["food_pairing"]
 
     def __repr__(self):
-        return f"instance of <Bear {self.name} >"
+        return f"instance of <Beer> {self.name} "
