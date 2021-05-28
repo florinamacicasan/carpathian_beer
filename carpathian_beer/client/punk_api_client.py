@@ -1,5 +1,10 @@
+from requests.exceptions import HTTPError
+
 from carpathian_beer.entity.beer import Beer
-from carpathian_beer.exceptions.punk_api_exception import PunkAPIException
+from carpathian_beer.exceptions.carpathian_beer_exceptions import (
+    InvalidIdException,
+    InvalidMonthOrYearException,
+)
 from carpathian_beer.session.request_session import RequestSession
 
 
@@ -10,64 +15,60 @@ class PunkApiClient:
         self.__base_url = base_url
         self.__session = session
 
-    def get_response(self, url_option):
+    def __get_response(self, url_option):
         # Get response for request
         # Input: url_option - string
         # Output: response - object
-        # Raise PunkAPIException if url is invalid
-        try:
-            response = self.__session.get(f"{self.__base_url}{url_option}")
-            response.raise_for_status()
-            return response.json()
-        except Exception:
-            # Carpathian_beer Exception !
-            raise PunkAPIException("")
+        response = self.__session.get(f"{self.__base_url}{url_option}")
+        response.raise_for_status()
+        return response.json()
 
     def get_beer(self, id):
         try:
-            response = self.get_response(f"/{id}")
+            response = self.__get_response(f"/{id}")
             return Beer(response[0])
-        except Exception:
-            # Clasa de exceptie care prinda usecase => RAISE "id invalid"
-            raise PunkAPIException('id invalid')
+        except HTTPError or Exception:
+            raise InvalidIdException()
 
     def get_random_beer(self):
-        try:
-            response = self.get_response("/random")
-            return Beer(response[0])
-        except Exception:
-            # Clasa de exceptie care prinda usecase => RAISE "id invalid"
-            raise PunkAPIException('url invalid')
+        response = self.__get_response("/random")
+        return Beer(response[0])
 
     # Generator peste care pot sa iterez : get_iter_all_bears
     def get_all_beers(self):
         # Get beers from the API
         # Output: beers - list
-        response = self.get_response("?page=13&per_page=25")
+        response = self.__get_response("?page=13&per_page=25")
         beers = []
         for beer_details in response:
             beers.append(Beer(beer_details))
         return beers
 
     def get_iter_all_beers(self):
-        beers=self.get_all_beers()
+        beers = self.get_all_beers()
         for beer in beers:
             yield beer
 
+    def __validate_month_and_year(self, month, year):
+        try:
+            month = int(month)
+            year = int(year)
+            if 0 < month and month <= 12 and 0 < year:
+                return True
+            return False
+        except ValueError:
+            return False
 
     def get_beers_brewd_before(self, month=None, year=None):
         # Get beers brewed before (month-year)
         if month and year:
-            response = self.get_response(f"?brewed_before={month}-{year}")
-            beers = []
-            for beer_details in response:
-                beers.append(Beer(beer_details))
-            return beers
+            if self.__validate_month_and_year(month, year):
+                response = self.__get_response(f"?brewed_before={month}-{year}")
+                beers = []
+                for beer_details in response:
+                    beers.append(Beer(beer_details))
+                return beers
+            else:
+                raise InvalidMonthOrYearException()
         else:
             return []
-
-def main():
-    client=PunkApiClient()
-    print(client.get_iter_all_beers())
-
-main()
