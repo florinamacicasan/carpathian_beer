@@ -23,45 +23,51 @@ class PunkApiClient:
             # Carpathian_beer Exception !
             raise PunkAPIException("")
 
-    # Impartim in 2 !
-    def get_beer(self, id=None):
-        # Get a single beer form the API using the beer's id
-        # If id == random: returns a random beer
-        # Output: Beer - object
+    def get_beer(self, id):
         try:
-            if id:
-                response = self.get_response(f"/{id}")
-            else:
-                response = self.get_response("/random")
+            response = self.get_response(f"/{id}")
             return Beer(response[0])
-        except PunkAPIException as exception:
+        except Exception:
             # Clasa de exceptie care prinda usecase => RAISE "id invalid"
-            return exception
+            raise PunkAPIException('id invalid')
 
-    # Nr de beers
+    def get_random_beer(self):
+        try:
+            response = self.get_response("/random")
+            return Beer(response[0])
+        except Exception:
+            # Clasa de exceptie care prinda usecase => RAISE "id invalid"
+            raise PunkAPIException('url invalid')
+
     # Generator peste care pot sa iterez : get_iter_all_bears
-    # Lista cu toate berile in alta functie !
-    # Fara PunkAPIException ..
     def get_all_beers(self):
         # Get beers from the API
         # Output: beers - list
-        response = self.get_response("")
+        response = self.get_response("?page=13&per_page=25")
         beers = []
         for beer_details in response:
             beers.append(Beer(beer_details))
         return beers
 
+    def get_iter_all_beers(self):
+        beers=self.get_all_beers()
+        for beer in beers:
+            yield beer
+
+
     def get_beers_brewd_before(self, month=None, year=None):
         # Get beers brewed before (month-year)
+        if month and year:
+            response = self.get_response(f"?brewed_before={month}-{year}")
+            beers = []
+            for beer_details in response:
+                beers.append(Beer(beer_details))
+            return beers
+        else:
+            return []
 
-        try:
-            if month and year:
-                response = self.get_response(f"?brewed_before={month}-{year}")
-                beers = []
-                for beer_details in response:
-                    beers.append(Beer(beer_details))
-                return beers
-            else:
-                return []
-        except PunkAPIException as exception:
-            return exception
+def main():
+    client=PunkApiClient()
+    print(client.get_iter_all_beers())
+
+main()
