@@ -1,4 +1,4 @@
-from client.beer import Beer
+from carpathian_beer.entity.beer import Beer
 
 # Test functions for Beer class methods
 
