@@ -1,5 +1,5 @@
 class Beer:
-    # Dataclass - refactorizare!
+    # Dataclass - refactorizare! imutable
 
     def __init__(self, beer_details):
         self.__beer_details = beer_details
