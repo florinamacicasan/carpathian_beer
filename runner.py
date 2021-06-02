@@ -1,4 +1,4 @@
-from carpathian_beer.client.punk_api_client import PunkApiClient
+from carpathian_beer.session.punk_api_client import PunkApiClient
 
 
 def main():
@@ -10,7 +10,8 @@ def main():
     for beer in client.get_iter_all_beers():
         print(beer)
     """
-    print(client.get_beers_brewd_before(13, -4))
+    # print(client.get_beers_brewd_before("?"))
+    print(client.get_all_beers(per_page=81))
 
 
 main()

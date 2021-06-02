@@ -1,10 +1,7 @@
 from requests.exceptions import HTTPError
 
 from carpathian_beer.entity.beer import Beer
-from carpathian_beer.exceptions.carpathian_beer_exceptions import (
-    InvalidIdException,
-    InvalidMonthOrYearException,
-)
+from carpathian_beer.exceptions.carpathian_beer_exceptions import InvalidIdException
 from carpathian_beer.session.request_session import RequestSession
 
 
@@ -34,42 +31,51 @@ class PunkApiClient:
         response = self.__get_response("/random")
         return Beer(response[0])
 
-    #TODO: page= , per_page= , limit  
-    def get_all_beers(self):
+    def get_all_beers(self, from_page=None, per_page=None, limit=None):
         # Get beers from the API
         # Output: beers - list
-        response = self.__get_response("?page=13&per_page=25")
+        if not from_page:
+            from_page = 1
+        if per_page > 80:
+            per_page = 25
+
+        final_response = []
+        if not per_page:
+            if not limit:
+                final_response = self.__get_response(f"?page={from_page}")
+            else:
+                final_response = self.__get_response(f"?page={from_page}")
+                final_response = final_response[:limit]
+        else:
+            if not limit:
+                final_response = self.__get_response(
+                    f"?page={from_page}&per_page={per_page}"
+                )
+            else:
+                count = 0
+                while count < limit:
+                    response = self.__get_response(
+                        f"?page={from_page}&per_page={per_page}"
+                    )
+                    final_response = final_response + response
+                    count = count + per_page
+                    from_page = from_page + 1
+
         beers = []
-        for beer_details in response:
+        for beer_details in final_response:
             beers.append(Beer(beer_details))
         return beers
-    
+
     # Generator peste care pot sa iterez : get_iter_all_bears
     def get_iter_all_beers(self):
         beers = self.get_all_beers()
         for beer in beers:
             yield beer
 
-    def __validate_month_and_year(self, month, year):
-        try:
-            month = int(month)
-            year = int(year)
-            if 0 < month and month <= 12 and 0 < year:
-                return True
-            return False
-        except ValueError:
-            return False
-
     def get_beers_brewd_before(self, month=None, year=None):
         # Get beers brewed before (month-year)
-        if month and year:
-            if self.__validate_month_and_year(month, year):
-                response = self.__get_response(f"?brewed_before={month}-{year}")
-                beers = []
-                for beer_details in response:
-                    beers.append(Beer(beer_details))
-                return beers
-            else:
-                raise InvalidMonthOrYearException()
-        else:
-            return []
+        response = self.__get_response(f"?brewed_before={month}-{year}")
+        beers = []
+        for beer_details in response:
+            beers.append(Beer(beer_details))
+        return beers
