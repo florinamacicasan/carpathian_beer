@@ -27,14 +27,14 @@ class PunkApiClient:
         try:
             response = self.__get_response(f"/{id}")
             return Beer(response[0])
-        except HTTPError or Exception:
+        except HTTPError:
             raise InvalidIdException()
 
     def get_random_beer(self):
         response = self.__get_response("/random")
         return Beer(response[0])
 
-    # Generator peste care pot sa iterez : get_iter_all_bears
+    #TODO: page= , per_page= , limit  
     def get_all_beers(self):
         # Get beers from the API
         # Output: beers - list
@@ -43,7 +43,8 @@ class PunkApiClient:
         for beer_details in response:
             beers.append(Beer(beer_details))
         return beers
-
+    
+    # Generator peste care pot sa iterez : get_iter_all_bears
     def get_iter_all_beers(self):
         beers = self.get_all_beers()
         for beer in beers:
