@@ -16,6 +16,9 @@ class PunkApiClient:
         # Get response for request
         # Input: url_option - string
         # Output: response - object
+
+        # params pentru get !!
+        # https://docs.python-requests.org/en/master/user/quickstart/#passing-parameters-in-urls
         response = self.__session.get(f"{self.__base_url}{url_option}")
         response.raise_for_status()
         return response.json()
@@ -31,38 +34,25 @@ class PunkApiClient:
         response = self.__get_response("/random")
         return Beer(response[0])
 
-    def get_all_beers(self, from_page=None, per_page=None, limit=None):
+    # raname from_page -> page
+    def get_all_beers(self, from_page=None, per_page=25, limit=None):
         # Get beers from the API
         # Output: beers - list
         if not from_page:
             from_page = 1
-        if per_page > 80:
-            per_page = 25
+            per_page = 80
 
-        final_response = []
-        if not per_page:
-            if not limit:
-                final_response = self.__get_response(f"?page={from_page}")
-            else:
-                final_response = self.__get_response(f"?page={from_page}")
-                final_response = final_response[:limit]
-        else:
-            if not limit:
-                final_response = self.__get_response(
-                    f"?page={from_page}&per_page={per_page}"
-                )
-            else:
-                count = 0
-                while count < limit:
-                    response = self.__get_response(
-                        f"?page={from_page}&per_page={per_page}"
-                    )
-                    final_response = final_response + response
-                    count = count + per_page
-                    from_page = from_page + 1
+        if not limit:
+            limit = per_page
+
+        # query params
+        response = self.__get_response(f"?page={from_page}&per_page={per_page}")
+        while len(response) < limit:
+            from_page += 1
+            response += self.__get_response(f"?page={from_page}&per_page={per_page}")
 
         beers = []
-        for beer_details in final_response:
+        for beer_details in response[:limit]:
             beers.append(Beer(beer_details))
         return beers
 
