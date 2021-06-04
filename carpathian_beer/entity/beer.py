@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 from typing import Dict
 
@@ -22,6 +23,8 @@ class Beer:
         self.first_brewed = beer_details["first_brewed"]
         self.description = beer_details["description"]
         self.food_pairing = beer_details["food_pairing"]
+        logging.info("Beer object has been initialized")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        logging.info("Beer representation")
         return f"instance of <Beer> {self.name} "
