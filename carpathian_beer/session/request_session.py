@@ -1,3 +1,4 @@
+import logging
 from typing import Dict
 
 import requests
@@ -12,6 +13,7 @@ class RequestSession(PunkAPIBaseSession):
     Params = Dict[str, str]
 
     def get(self, url: str, parameters: Params = None) -> requests.Response:
+        logging.info("get has been called")
         if parameters:
             return self._session.get(url, params=parameters)
         return self._session.get(url)

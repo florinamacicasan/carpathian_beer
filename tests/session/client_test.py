@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 import responses
 
@@ -6,6 +8,7 @@ from carpathian_beer.session.client import PunkApiClient
 
 
 def get_dummy_beer(id):
+    logging.info("creeating dummy_beer")
     return {
         "id": id,
         "name": "Trashy Blonde",
@@ -66,6 +69,7 @@ def get_dummy_beer(id):
 
 # Generator peste care pot sa iterez
 def generate_beers(ids):
+    logging.info("generate_beers has been called")
     for id in ids:
         beer = get_dummy_beer(id)
         yield beer
@@ -83,7 +87,12 @@ def test_get_beer():
         status=200,
     )
 
-    assert CLIENT.get_beer(2).id == 2
+    try:
+        assert CLIENT.get_beer(2).id == 2
+        logging.info("test_get_beer succeed")
+    except AssertionError as exception:
+        logging.error("test_get_beer failed")
+        raise exception
 
 
 @responses.activate
@@ -108,7 +117,12 @@ def test_get_random_beer():
         status=200,
     )
 
-    assert CLIENT.get_random_beer().id == 2
+    try:
+        assert CLIENT.get_random_beer().id == 2
+        logging.info("test_get_random_beer succeed")
+    except AssertionError as exception:
+        logging.error("test_get_random_beer failed")
+        raise exception
 
 
 @responses.activate
@@ -120,7 +134,12 @@ def test_get_all_beers_from_page():
         status=200,
     )
 
-    assert len(CLIENT.get_all_beers(page=2)) == 25
+    try:
+        assert len(CLIENT.get_all_beers(page=2)) == 25
+        logging.info("test_get_all_beers_from_page succeed")
+    except AssertionError as exception:
+        logging.error("test_get_all_beers_from_page failed")
+        raise exception
 
 
 @responses.activate
@@ -153,7 +172,12 @@ def test_get_all_beers_limit():
         status=200,
     )
 
-    assert len(CLIENT.get_all_beers(page=3, limit=90)) == 90
+    try:
+        assert len(CLIENT.get_all_beers(page=3, limit=90)) == 90
+        logging.info("test_get_all_beers_limit succeed")
+    except AssertionError as exception:
+        logging.error("test_get_all_beers failed")
+        raise exception
 
 
 @responses.activate
@@ -165,11 +189,16 @@ def test_get_all_beers_per_page():
         status=200,
     )
 
-    assert (len(CLIENT.get_all_beers(page=2, per_page=10))) == 10
+    try:
+        assert (len(CLIENT.get_all_beers(page=2, per_page=10))) == 10
+        logging.info("test_get_all_beers_per_page succeed")
+    except AssertionError as exception:
+        logging.error("test_get_all_beers_per_page failed")
+        raise exception
 
 
 @responses.activate
-def test_get_beers_brewd_before():
+def test_get_beers_brewed_before():
     responses.add(
         responses.GET,
         "https://api.punkapi.com/v2/beers?brewed_before=11-2015",
@@ -177,7 +206,12 @@ def test_get_beers_brewd_before():
         status=200,
     )
 
-    assert (len(CLIENT.get_beers_brewd_before(month=11, year=2015))) == 20
+    try:
+        assert (len(CLIENT.get_beers_brewd_before(month=11, year=2015))) == 20
+        logging.info("test_get_beers_brewed_before succeed")
+    except AssertionError as exception:
+        logging.error("test_get_beers_brewed_before failed")
+        raise exception
 
 
 def test_iter_all_beers():
@@ -188,4 +222,9 @@ def test_iter_all_beers():
         status=200,
     )
     beer_generator = CLIENT.get_iter_all_beers()
-    assert next(beer_generator).id == 1
+    try:
+        assert next(beer_generator).id == 1
+        logging.info("test_iter_all_beers succeed")
+    except AssertionError as exception:
+        logging.error("test_iter_all_beers failed")
+        raise exception
