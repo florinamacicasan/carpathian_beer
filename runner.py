@@ -1,7 +1,7 @@
 from carpathian_beer.session.client import PunkApiClient
 
 
-def main():
+def main() -> None:
     client = PunkApiClient()
     # print(client.get_beer('a'))
     # gen = client.get_iter_all_beers()

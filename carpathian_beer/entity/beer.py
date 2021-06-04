@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Dict
 
 
 @dataclass(unsafe_hash=True)
@@ -11,7 +12,9 @@ class Beer:
     description: str
     food_pairing: str
 
-    def __init__(self, beer_details):
+    BeerDetails = Dict[str, str]
+
+    def __init__(self, beer_details: BeerDetails) -> None:
         self.id = beer_details["id"]
         self.name = beer_details["name"]
         self.ingredients = list(beer_details["ingredients"])

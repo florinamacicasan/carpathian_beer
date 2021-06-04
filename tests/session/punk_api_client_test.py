@@ -2,7 +2,7 @@ import pytest
 import responses
 
 from carpathian_beer.exceptions.carpathian_beer_exceptions import InvalidIdException
-from carpathian_beer.session.punk_api_client import PunkApiClient
+from carpathian_beer.session.client import PunkApiClient
 
 
 def get_dummy_beer(id):
@@ -120,7 +120,7 @@ def test_get_all_beers_from_page():
         status=200,
     )
 
-    assert len(CLIENT.get_all_beers(from_page=2)) == 25
+    assert len(CLIENT.get_all_beers(page=2)) == 25
 
 
 @responses.activate
@@ -153,7 +153,7 @@ def test_get_all_beers_limit():
         status=200,
     )
 
-    assert len(CLIENT.get_all_beers(from_page=3, limit=90)) == 90
+    assert len(CLIENT.get_all_beers(page=3, limit=90)) == 90
 
 
 @responses.activate
@@ -165,7 +165,7 @@ def test_get_all_beers_per_page():
         status=200,
     )
 
-    assert (len(CLIENT.get_all_beers(from_page=2, per_page=10))) == 10
+    assert (len(CLIENT.get_all_beers(page=2, per_page=10))) == 10
 
 
 @responses.activate
