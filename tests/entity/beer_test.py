@@ -3,7 +3,7 @@ import logging
 from carpathian_beer import Beer
 
 # Test functions for Beer class methods
-
+#TODO : delete loggin
 
 def test_beer_details():
     beer_attributes = {

@@ -2,6 +2,7 @@ import logging
 
 from carpathian_beer import Client
 
+#TODO: move loggin
 logging.basicConfig(filename="runner.log", filemode="w", level=logging.DEBUG)
 
 
