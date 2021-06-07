@@ -15,12 +15,12 @@ repos:
     -   id: flake8
         name: flake8
         language: system
-        entry: poetry run flake8 --max-line-length 88
+        entry: poetry run flake8 --max-line-length 88 --exclude __init__.py
         types: [python]
     -   id: isort
         name: isort
         language: system
-        entry: poetry run isort --profile black
+        entry: poetry run isort --profile black -s __init__.py --df
         types: [python]
     -   id: pytest
         name: pytest

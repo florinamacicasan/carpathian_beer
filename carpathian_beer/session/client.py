@@ -1,14 +1,16 @@
 import logging
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 from requests.exceptions import HTTPError
 
-from carpathian_beer.entity.beer import Beer
-from carpathian_beer.exceptions.carpathian_beer_exceptions import InvalidIdException
-from carpathian_beer.session.request_session import RequestSession
+from carpathian_beer import Beer, InvalidIdException, RequestSession
+
+Beers = List[Beer]
+Params = Dict[str, str]
+IntOrString = Union[int, str]
 
 
-class PunkApiClient:
+class Client:
     def __init__(
         self,
         base_url: str = "https://api.punkapi.com/v2/beers",
@@ -18,13 +20,10 @@ class PunkApiClient:
         self.__session = session
         logging.info("PunkApiClient object has been initialized")
 
-    Params = Dict[str, str]
-
-    def __get_response(self, params: Params = None, url_option: str = None) -> Any:
-        if params:
-            response = self.__session.get(self.__base_url, params)
-        if url_option:
-            response = self.__session.get(f"{self.__base_url}/{url_option}")
+    def __get_response(self, url: str = None, params: Params = None) -> Dict[str, Any]:
+        if not url:
+            url = self.__base_url
+        response = self.__session.get(url, params)
         response.raise_for_status()
         logging.info("__get_response has been called")
         return response.json()
@@ -32,21 +31,24 @@ class PunkApiClient:
     def get_beer(self, id: int) -> Beer:
         logging.info("get_beer has been called")
         try:
-            response = self.__get_response(url_option=id)
-            return Beer(response[0])
+            url = f"{self.__base_url}/{id}"
+            response = self.__get_response(url)
+            return Beer(**response[0])
         except HTTPError as error:
             logging.error("HTTPError occured")
             raise InvalidIdException(error)
 
     def get_random_beer(self) -> Beer:
-        response = self.__get_response(url_option="random")
+        url = f"{self.__base_url}/random"
+        response = self.__get_response(url)
         logging.info("get_random_beer has been called")
-        return Beer(response[0])
-
-    Beers = List[Beer]
+        return Beer(**response[0])
 
     def get_all_beers(
-        self, page: int = None, per_page: int = 25, limit: int = None
+        self,
+        page: IntOrString = None,
+        per_page: IntOrString = 25,
+        limit: IntOrString = None,
     ) -> Beers:
         logging.info("get_all_beers has been called")
         # Get beers from the API
@@ -65,7 +67,7 @@ class PunkApiClient:
 
         beers = []
         for beer_details in response[:limit]:
-            beers.append(Beer(beer_details))
+            beers.append(Beer(**beer_details))
         return beers
 
     # Generator peste care pot sa iterez : get_iter_all_bears
@@ -81,5 +83,5 @@ class PunkApiClient:
         response = self.__get_response(params={"brewed_before": f"{month}-{year}"})
         beers = []
         for beer_details in response:
-            beers.append(Beer(beer_details))
+            beers.append(Beer(**beer_details))
         return beers

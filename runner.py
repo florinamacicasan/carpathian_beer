@@ -1,10 +1,10 @@
 import logging
 
-from carpathian_beer.session.client import PunkApiClient
+from carpathian_beer import Client
 
 
 def main() -> None:
-    client = PunkApiClient()
+    client = Client()
     # print(client.get_beer('a'))
     # gen = client.get_iter_all_beers()
     # print(next(gen))
@@ -23,8 +23,9 @@ def main() -> None:
     logger.error("err")
     # logging.warning("CEVA")
 
-    print(client.get_beer("1"))
-    print(client.get_random_beer())
+    # print(client.get_beer("1"))
+    # print(client.get_random_beer())
+    print(client.get_all_beers())
 
 
 if __name__ == "__main__":

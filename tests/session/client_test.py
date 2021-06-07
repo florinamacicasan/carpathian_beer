@@ -3,79 +3,44 @@ import logging
 import pytest
 import responses
 
-from carpathian_beer.exceptions.carpathian_beer_exceptions import InvalidIdException
-from carpathian_beer.session.client import PunkApiClient
+from carpathian_beer import Client, InvalidIdException
 
 
 def get_dummy_beer(id):
     logging.info("creeating dummy_beer")
     return {
         "id": id,
-        "name": "Trashy Blonde",
-        "first_brewed": "04/2008",
-        "description": "A titillating, neurotic, peroxide punk of a Pale Ale.",
-        "ingredients": {
-            "malt": [
-                {
-                    "name": "Maris Otter Extra Pale",
-                    "amount": {"value": 3.25, "unit": "kilograms"},
-                },
-                {
-                    "name": "Caramalt",
-                    "amount": {"value": 0.2, "unit": "kilograms"},
-                },
-                {
-                    "name": "Munich",
-                    "amount": {"value": 0.4, "unit": "kilograms"},
-                },
-            ],
-            "hops": [
-                {
-                    "name": "Amarillo",
-                    "amount": {"value": 13.8, "unit": "grams"},
-                    "add": "start",
-                    "attribute": "bitter",
-                },
-                {
-                    "name": "Simcoe",
-                    "amount": {"value": 13.8, "unit": "grams"},
-                    "add": "start",
-                    "attribute": "bitter",
-                },
-                {
-                    "name": "Amarillo",
-                    "amount": {"value": 26.3, "unit": "grams"},
-                    "add": "end",
-                    "attribute": "flavour",
-                },
-                {
-                    "name": "Motueka",
-                    "amount": {"value": 18.8, "unit": "grams"},
-                    "add": "end",
-                    "attribute": "flavour",
-                },
-            ],
-            "yeast": "Wyeast 1056 - American Ale™",
-        },
-        "food_pairing": [
-            "Fresh crab with lemon",
-            "Garlic butter dipping sauce",
-            "Goats cheese salad",
-            "Creamy lemon bar doused in powdered sugar",
-        ],
-        "brewers_tips": "Be careful not to collect too much wort from the mash",
+        "name": "Ursus",
+        "tagline": "ok",
+        "first_brewed": "05/2007",
+        "description": "strong and bitter taste",
+        "image_url": "https://images.punkapi.com/v2/5.png",
+        "abv": 4.5,
+        "ibu": 59,
+        "target_fg": 1027,
+        "target_og": 1069,
+        "ebc": 10,
+        "srm": 5,
+        "ph": 4.4,
+        "attenuation_level": 67,
+        "volume": {"value": 20, "unit": "litres"},
+        "boil_volume": {"value": 25, "unit": "litres"},
+        "method": {"mash_temp": [], "fermentation": {}},
+        "ingredients": {"malt": [], "hops": []},
+        "food_pairing": ["vietnamese squid salad"],
+        "brewers_tips": "ok",
+        "contributed_by": "Sam Mason",
     }
 
 
 # Generator peste care pot sa iterez
 def generate_beers(ids):
-    logging.info("generate_beers has been called")
     for id in ids:
         beer = get_dummy_beer(id)
         yield beer
 
 
-CLIENT = PunkApiClient()
+CLIENT = Client()
 
 
 @responses.activate
