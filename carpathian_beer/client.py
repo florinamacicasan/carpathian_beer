@@ -2,8 +2,8 @@ import logging
 from typing import Any, Dict, List, Union
 
 from requests.exceptions import HTTPError
+from carpathian_beer import Beer, RequestSession, InvalidIdException
 
-from carpathian_beer import Beer, InvalidIdException, RequestSession
 
 Beers = List[Beer]
 Params = Dict[str, str]
@@ -15,9 +15,14 @@ class Client:
         self,
         base_url: str = "https://api.punkapi.com/v2/beers",
         session: RequestSession = RequestSession(),
+        shouldLogging: bool = False,
     ) -> None:
         self.__base_url = base_url
         self.__session = session
+        if shouldLogging:
+            logging.basicConfig(
+                filename="runner.log", filemode="w", level=logging.DEBUG
+            )
 
     def __get_response(self, url: str = None, params: Params = None) -> Dict[str, Any]:
         if not url:

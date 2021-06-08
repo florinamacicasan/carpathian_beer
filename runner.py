@@ -1,17 +1,13 @@
-import logging
-
 from carpathian_beer import Client
-
-logging.basicConfig(filename="runner.log", filemode="w", level=logging.DEBUG)
 
 
 def main() -> None:
-    logging.info("Start")
-    client = Client()
+    # logging.info("Start")
+    client = Client(shouldLogging=True)
     print(client.get_beer("1"))
-    print(client.get_random_beer())
+    # print(client.get_random_beer())
     # print(client.get_all_beers())
-    logging.info("End")
+    # logging.info("End")
 
 
 if __name__ == "__main__":

@@ -1,7 +1,6 @@
 from typing import Dict
 
 import requests
-
 from carpathian_beer import BaseSession
 
 
