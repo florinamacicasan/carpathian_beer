@@ -15,7 +15,12 @@ black = "^21.5b1"
 isort = "^5.8.0"
 pytest = "^6.2.4"
 responses = "^0.13.3"
+arrow = "^1.1.0"
+click = "^8.0.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+carpathian_beer = "carpathian_beer.cli:carpathian_beer"
