@@ -21,6 +21,7 @@ class Client:
         self.__session = session
         self.__shouldLog = shouldLog
 
+    # Standard output vs file - ambele / niciunul / doar unul
     def log_if_requested(function):
         def wrapper(self, *args, **kwargs):
             if self.__shouldLog:

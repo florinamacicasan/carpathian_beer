@@ -1,23 +1,23 @@
 from carpathian_beer import Client
 import pprint
 import argparse
+from dataclasses import asdict
 
-CLIENT = Client()
-PP = pprint.PrettyPrinter(indent=4, compact=True)
+client = Client()
 
 
 def fetch_beer_by_id(args):
     if args.id:
         id = int(args.id)
-        beer = CLIENT.get_beer(id)
-        pprint.pprint(beer.__repr__())
+        beer = client.get_beer(id)
+        pprint.pprint(asdict(beer))
     else:
         pprint.pprint("Specify id argument !")
 
 
 def fetch_random_beer(args):
-    beer = CLIENT.get_random_beer()
-    pprint.pprint(beer)
+    beer = client.get_random_beer()
+    pprint.pprint(asdict(beer))
 
 
 def fetch_beers(args):
@@ -30,9 +30,9 @@ def fetch_beers(args):
     if args.limit:
         args.limit = int(args.limit)
 
-    beers = CLIENT.get_all_beers(args.page, args.per_page, args.limit)
+    beers = client.get_all_beers(args.page, args.per_page, args.limit)
     for beer in beers:
-        pprint.pprint(beer)
+        pprint.pprint(asdict(beer))
 
 
 def carpathian_beer():

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carpathian_beer"
-version = "0.1.0"
+version = "1.0.0"
 description = ""
 authors = ["Florina Macicasan <florina.macicasan@fortech.ro>"]
 
@@ -22,4 +22,4 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-carpathian_beer = "carpathian_beer.cli:carpathian_beer"
+carpathian-beer = "carpathian_beer.cli:carpathian_beer"
