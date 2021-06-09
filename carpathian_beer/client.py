@@ -80,17 +80,18 @@ class Client:
         # Get beers from the API
         # Output: beers - list
 
-        if not page:
-            page = 1
-            per_page = 80
+        per_page = 80 if page in [1, None] else per_page
+        limit = limit or per_page if page is not None else limit
+        page = page or 1
 
-        if not limit:
-            limit = per_page
-
-        response = self.__get_response(params={"page": page, "per_page": per_page})
-        while len(response) < limit:
+        response = []
+        # response = self.__get_response(params={"page": page, "per_page": per_page})
+        while (limit is None) or (len(response) < limit):
+            resp = self.__get_response(params={"page": page, "per_page": per_page})
+            response += resp
             page += 1
-            response += self.__get_response(params={"page": page, "per_page": per_page})
+            if len(resp) < per_page:
+                break
 
         beers = []
         for beer_details in response[:limit]:

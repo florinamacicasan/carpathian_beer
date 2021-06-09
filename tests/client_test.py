@@ -136,6 +136,20 @@ def test_get_all_beers_per_page():
 
 
 @responses.activate
+def test_gell_all_beers():
+    beers = list(generate_beers(range(1, 330)))
+    for page in range(1, 6):
+        responses.add(
+            responses.GET,
+            f"https://api.punkapi.com/v2/beers?page={page}&per_page=80",
+            json=beers[(page - 1) * 80 : page * 80],
+            status=200,
+        )
+
+    assert (len(CLIENT.get_all_beers())) == 329
+
+
+@responses.activate
 def test_get_beers_brewed_before():
     responses.add(
         responses.GET,
