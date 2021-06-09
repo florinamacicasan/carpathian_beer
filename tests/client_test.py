@@ -1,3 +1,4 @@
+from carpathian_beer.exceptions import ArgumentsException
 import pytest
 import responses
 
@@ -147,6 +148,30 @@ def test_gell_all_beers():
         )
 
     assert (len(CLIENT.get_all_beers())) == 329
+
+
+@responses.activate
+def test_gell_all_beers_with_limit():
+    responses.add(
+        responses.GET,
+        "https://api.punkapi.com/v2/beers/",
+        json=list(generate_beers([1, 2, 3])),
+        status=400,
+    )
+
+    assert (len(CLIENT.get_all_beers(limit=0))) == 0
+
+
+@responses.activate
+def test_gell_all_beers_with_per_page():
+    with pytest.raises(ArgumentsException):
+        CLIENT.get_all_beers(per_page=0)
+
+
+@responses.activate
+def test_gell_all_beers_with_page():
+    with pytest.raises(ArgumentsException):
+        CLIENT.get_all_beers(page=0)
 
 
 @responses.activate
