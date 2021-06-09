@@ -2,7 +2,7 @@ import logging
 from typing import Any, Dict, List, Union
 
 from requests.exceptions import HTTPError
-from carpathian_beer import Beer, RequestSession, InvalidIdException
+from carpathian_beer import Beer, RequestSession, InvalidIdException, ArgumentsException
 
 
 Beers = List[Beer]
@@ -31,7 +31,7 @@ class Client:
             try:
                 result = function(self, *args, **kwargs)
                 info = {}
-                if type(result) is list:
+                if type(result) is list and len(result) > 0:
                     info["size"] = len(result)
                     info["first object"] = result[0]
                     info["last object"] = result[-1]
@@ -79,9 +79,14 @@ class Client:
     ) -> Beers:
         # Get beers from the API
         # Output: beers - list
+        if not per_page:
+            raise ArgumentsException("Per_page must be greater than 0!")
 
-        per_page = 80 if page in [1, None] else per_page
+        if page in [0, "0"]:
+            raise ArgumentsException("Page must be greater than 0!")
+
         limit = limit or per_page if page is not None else limit
+        per_page = 80 if page in [1, None, "1"] else per_page
         page = page or 1
 
         response = []

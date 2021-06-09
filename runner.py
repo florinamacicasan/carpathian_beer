@@ -6,7 +6,7 @@ def main() -> None:
     client = Client(shouldLog=True)
     # print(client.get_beer("1"))
     # print(client.get_random_beer())
-    print(client.get_all_beers())
+    print(client.get_all_beers(page=0))
     # logging.info("End")
 
 
