@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Union
 
 from requests.exceptions import HTTPError
 from carpathian_beer import Beer, RequestSession, InvalidIdException, ArgumentsException
-
+from carpathian_beer.logger import logger_setup
 
 Beers = List[Beer]
 Params = Dict[str, str]
@@ -15,19 +15,19 @@ class Client:
         self,
         base_url: str = "https://api.punkapi.com/v2/beers",
         session: RequestSession = RequestSession(),
-        shouldLog: bool = False,
+        file_logger: str = None,
+        log_to_stdout: bool = False
     ) -> None:
         self.__base_url = base_url
         self.__session = session
-        self.__shouldLog = shouldLog
+        self.__logger = logger_setup(file_logger,log_to_stdout)
 
     # Standard output vs file - ambele / niciunul / doar unul
     def log_if_requested(function):
         def wrapper(self, *args, **kwargs):
-            if self.__shouldLog:
-                logging.info(
-                    f"{function.__name__} called with arguments {args}, {kwargs}"
-                )
+            self.__logger.info(
+                f"{function.__name__} called with arguments {args}, {kwargs}"
+            )
 
             try:
                 result = function(self, *args, **kwargs)
@@ -40,11 +40,11 @@ class Client:
                     info["object"] = result
 
             except Exception as exception:
-                logging.error(f"{exception} occured")
+                self.__logger.error(f"{exception} occured")
                 raise exception
 
-            if self.__shouldLog:
-                logging.info(f"{function.__name__} returned {info}")
+            
+            self.__logger.info(f"{function.__name__} returned {info}")
             return result
 
         return wrapper

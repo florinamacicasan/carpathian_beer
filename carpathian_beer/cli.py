@@ -2,6 +2,7 @@ from carpathian_beer import Client
 import pprint
 import argparse
 from dataclasses import asdict
+import sys 
 
 client = Client()
 
@@ -21,23 +22,27 @@ def fetch_random_beer(args):
 
 
 def fetch_beers(args):
+    arg={}
     if args.page:
-        args.page = int(args.page)
+        arg["page"] = int(args.page)
 
     if args.per_page:
-        args.per_page = int(args.per_page)
+        arg["per_page"] = int(args.per_page)
 
     if args.limit:
-        args.limit = int(args.limit)
+        arg["limit"] = int(args.limit)
 
-    beers = client.get_all_beers(args.page, args.per_page, args.limit)
+    beers = client.get_all_beers(**arg)
     for beer in beers:
         pprint.pprint(asdict(beer))
 
+def make_client(args):
+    print(args)
 
-def carpathian_beer():
+def argparse_setup():
     parser = argparse.ArgumentParser(prog="carpathian_beer")
-
+    parser.add_argument("--log-to-stdout", type= bool, help="specify if should log to standard output")
+    parser.set_defaults(func=make_client)
     subparsers = parser.add_subparsers(help="Possible commands")
 
     parser_get_beer = subparsers.add_parser("get_beer", help="Fetch beer with given id")
@@ -67,5 +72,13 @@ def carpathian_beer():
     )
     parser_get_beers.set_defaults(func=fetch_beers)
 
-    args = parser.parse_args()
-    args.func(args)
+    return parser
+def carpathian_beer():
+    try:
+        parser= argparse_setup()
+        args = parser.parse_args()
+        args.func(args)
+        exit(0)
+    except Exception as exception:
+        print(exception, file=sys.stderr)
+        exit(1)
