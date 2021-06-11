@@ -2,12 +2,19 @@ from carpathian_beer import Client
 import pprint
 import argparse
 from dataclasses import asdict
-import sys 
+import sys
 
-client = Client()
+
+def make_client(args):
+    if args.log_to_stdout:
+        client = Client(file_logger=args.file_logger, log_to_stdout=True)
+    else:
+        client = Client(file_logger=args.file_logger, log_to_stdout=False)
+    return client
 
 
 def fetch_beer_by_id(args):
+    client = make_client(args)
     if args.id:
         id = int(args.id)
         beer = client.get_beer(id)
@@ -17,31 +24,36 @@ def fetch_beer_by_id(args):
 
 
 def fetch_random_beer(args):
+    client = make_client(args)
     beer = client.get_random_beer()
     pprint.pprint(asdict(beer))
 
 
 def fetch_beers(args):
-    arg={}
-    if args.page:
+    client = make_client(args)
+    arg = {}
+    if args.page or args.page in [0, "0"]:
         arg["page"] = int(args.page)
 
-    if args.per_page:
+    if args.per_page or args.per_page in [0, "0"]:
         arg["per_page"] = int(args.per_page)
 
-    if args.limit:
+    if args.limit or args.limit in [0, "0"]:
         arg["limit"] = int(args.limit)
 
     beers = client.get_all_beers(**arg)
+    beers_list = []
     for beer in beers:
-        pprint.pprint(asdict(beer))
+        beers_list.append(asdict(beer))
+    pprint.pprint(beers_list)
 
-def make_client(args):
-    print(args)
 
 def argparse_setup():
     parser = argparse.ArgumentParser(prog="carpathian_beer")
-    parser.add_argument("--log-to-stdout", type= bool, help="specify if should log to standard output")
+    parser.add_argument(
+        "--log-to-stdout", help="specify if should log to standard output", type=bool
+    )
+    parser.add_argument("--file-logger", help="specify filename to log", type=str)
     parser.set_defaults(func=make_client)
     subparsers = parser.add_subparsers(help="Possible commands")
 
@@ -73,9 +85,11 @@ def argparse_setup():
     parser_get_beers.set_defaults(func=fetch_beers)
 
     return parser
+
+
 def carpathian_beer():
     try:
-        parser= argparse_setup()
+        parser = argparse_setup()
         args = parser.parse_args()
         args.func(args)
         exit(0)
