@@ -3,9 +3,10 @@ import pprint
 import argparse
 from dataclasses import asdict
 import sys
+from typing import Any
 
 
-def make_client(args):
+def make_client(args: Any) -> Client:
     if args.log_to_stdout:
         client = Client(file_logger=args.file_logger, log_to_stdout=True)
     else:
@@ -13,7 +14,7 @@ def make_client(args):
     return client
 
 
-def fetch_beer_by_id(args):
+def fetch_beer_by_id(args: Any) -> None:
     client = make_client(args)
     if args.id:
         id = int(args.id)
@@ -23,13 +24,13 @@ def fetch_beer_by_id(args):
         pprint.pprint("Specify id argument !")
 
 
-def fetch_random_beer(args):
+def fetch_random_beer(args: Any) -> None:
     client = make_client(args)
     beer = client.get_random_beer()
     pprint.pprint(asdict(beer))
 
 
-def fetch_beers(args):
+def fetch_beers(args: Any) -> None:
     client = make_client(args)
     arg = {}
     if args.page or args.page in [0, "0"]:
@@ -48,7 +49,7 @@ def fetch_beers(args):
     pprint.pprint(beers_list)
 
 
-def argparse_setup():
+def argparse_setup() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="carpathian_beer")
     parser.add_argument(
         "--log-to-stdout", help="specify if should log to standard output", type=bool
@@ -87,7 +88,7 @@ def argparse_setup():
     return parser
 
 
-def carpathian_beer():
+def carpathian_beer() -> None:
     try:
         parser = argparse_setup()
         args = parser.parse_args()
