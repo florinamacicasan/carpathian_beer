@@ -1,8 +1,9 @@
 [tool.poetry]
 name = "carpathian_beer"
-version = "1.0.1"
+version = "1.0.2"
 description = ""
 authors = ["Florina Macicasan <florina.macicasan@fortech.ro>"]
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "3.8.10"
