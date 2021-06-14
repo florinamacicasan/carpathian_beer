@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carpathian_beer"
-version = "1.0.0"
+version = "1.0.1"
 description = ""
 authors = ["Florina Macicasan <florina.macicasan@fortech.ro>"]
 
